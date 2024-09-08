@@ -1,0 +1,8 @@
+vm1 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+vm2 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}

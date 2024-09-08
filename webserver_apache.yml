@@ -1,0 +1,99 @@
+---
+- name: Deploy Apache2 web servers on VM1 and VM2
+  hosts: webservers
+  become: true
+  vars:
+    server_message_1: "Hello World from SJSU-1"
+    server_message_2: "Hello World from SJSU-2"
+    webserver_port: 8080
+  tasks:
+    - name: Install Apache2
+      apt:
+        name: apache2
+        state: present
+        update_cache: true
+      tags:
+        - deploy
+
+    - name: Ensure Apache listens on port 8080
+      lineinfile:
+        path: /etc/apache2/ports.conf
+        regexp: '^Listen '
+        line: 'Listen {{ webserver_port }}'
+        state: present
+      tags:
+        - deploy
+
+    - name: Update the default site to listen on port 8080
+      lineinfile:
+        path: /etc/apache2/sites-available/000-default.conf
+        regexp: '^<VirtualHost \*:'
+        line: '<VirtualHost *:{{ webserver_port }}>'
+        state: present
+        insertafter: '^<VirtualHost'
+      tags:
+        - deploy
+
+    - name: Create custom index.html for VM1
+      copy:
+        dest: /var/www/html/index.html
+        content: "{{ server_message_1 }}"
+      when: inventory_hostname == "vm1"
+      tags:
+        - deploy
+
+    - name: Create custom index.html for VM2
+      copy:
+        dest: /var/www/html/index.html
+        content: "{{ server_message_2 }}"
+      when: inventory_hostname == "vm2"
+      tags:
+        - deploy
+
+    - name: Debug inventory hostname
+      debug:
+        msg: "{{ inventory_hostname }}"
+      tags:
+        - deploy
+
+    - name: Ensure Apache2 is started and enabled
+      service:
+        name: apache2
+        state: started
+        enabled: true
+      tags:
+        - deploy
+
+    - name: Reload Apache2 to apply configuration changes
+      service:
+        name: apache2
+        state: reloaded
+      tags:
+        - deploy
+
+
+- name: Un-deploy Apache2 web servers
+  hosts: webservers
+  become: true
+  tasks:
+    - name: Stop Apache2 service
+      service:
+        name: apache2
+        state: stopped
+      tags:
+        - undeploy
+
+    - name: Remove Apache2 package
+      apt:
+        name: apache2
+        state: absent
+        purge: yes
+      tags:
+        - undeploy
+
+    - name: Remove custom index.html
+      file:
+        path: /var/www/html/index.html
+        state: absent
+      tags:
+        - undeploy

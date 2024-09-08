@@ -1,0 +1,53 @@
+
+PLAY [Deploy Apache2 web servers on VM1 and VM2] *******************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [vm1]
+ok: [vm2]
+
+TASK [Install Apache2] *********************************************************
+changed: [vm2]
+changed: [vm1]
+
+TASK [Ensure Apache listens on port 8080] **************************************
+changed: [vm1]
+changed: [vm2]
+
+TASK [Update the default site to listen on port 8080] **************************
+changed: [vm1]
+changed: [vm2]
+
+TASK [Create custom index.html for VM1] ****************************************
+skipping: [vm2]
+changed: [vm1]
+
+TASK [Create custom index.html for VM2] ****************************************
+skipping: [vm1]
+changed: [vm2]
+
+TASK [Debug inventory hostname] ************************************************
+ok: [vm1] => {
+    "msg": "vm1"
+}
+ok: [vm2] => {
+    "msg": "vm2"
+}
+
+TASK [Ensure Apache2 is started and enabled] ***********************************
+ok: [vm1]
+ok: [vm2]
+
+TASK [Reload Apache2 to apply configuration changes] ***************************
+changed: [vm1]
+changed: [vm2]
+
+PLAY [Un-deploy Apache2 web servers] *******************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [vm1]
+ok: [vm2]
+
+PLAY RECAP *********************************************************************
+vm1                        : ok=9    changed=5    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
+vm2                        : ok=9    changed=5    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
+

@@ -1,0 +1,29 @@
+
+PLAY [Deploy Apache2 web servers on VM1 and VM2] *******************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [vm1]
+ok: [vm2]
+
+PLAY [Un-deploy Apache2 web servers] *******************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [vm1]
+ok: [vm2]
+
+TASK [Stop Apache2 service] ****************************************************
+changed: [vm2]
+changed: [vm1]
+
+TASK [Remove Apache2 package] **************************************************
+changed: [vm2]
+changed: [vm1]
+
+TASK [Remove custom index.html] ************************************************
+changed: [vm1]
+changed: [vm2]
+
+PLAY RECAP *********************************************************************
+vm1                        : ok=5    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+vm2                        : ok=5    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
